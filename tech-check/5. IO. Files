@@ -1,0 +1,104 @@
+Basic
+1.Как создать файл?
+
+    Сначала надо создать объект типа File и передать в него в качестве параметра,
+    например String с желаемым именем файла.
+    Затем на этом объекте вызвать метод createNewFile(). Этот метод может вызвать исключение IOException.
+
+2. Как удалить директорию с файлами? ЧТо если в ней есть вложенные директории?
+
+    Если в директории есть файлы и/или директории, то для того чтобы удалить директорию, надо сначала удалить все
+    содержащиеся в ней файлы и директории. После этого можно будет удалить и саму директорию.
+    Рекурсивно: java.io
+    public static void delRecursive(File dir) {
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory()) {
+                    delRecursive(files[i]);
+                }
+                files[i].delete();
+            }
+        } else {
+            dir.delete();
+        }
+    }
+    Через walkFileTree(): java.nio
+    private static void delWalkFileTree(File dir) throws IOException {
+            FileVisitor<Path> fileVisitor = new FileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.deleteIfExists(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.deleteIfExists(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            };
+            Files.walkFileTree(dir.toPath(), fileVisitor);
+        }
+
+3. Два типа ввода-вывода в Java.
+
+    InputStream и OutputStream.
+
+4. Что такое InputStream и OutputStream? Для чего они нужны?
+
+    Это абстрактные классы. Все потоки ввода/вывода данных (потока байтов) являются подклассами этих классов.
+    Они нужны для работы с файлами, сетевыми соединениями и т.д.
+
+5. Что делает метод read()? Для чего нужен? Какой тип возвращает?
+
+    Считывает следующий байт или массив байтов из потока и переводит курсор на следующую позицию.
+    Возвращает int. Если достигнут конец потока данных возвращает -1.
+
+6. Что делает метод flush()?
+
+    Сбрасывает(смывает) поток данных из потока получателю.
+
+7. Почему важно закрывать потоки?
+
+    Для того чтобы освободить ресурсы приложения связанные с потоком.
+
+8. Что такое сериализация? Для чего она нужна?
+
+    Сериализация — это процесс преобразования объекта в потоки байт. Для передачи клиентскому приложению,
+    для хранения в файле или базе данных.
+
+9. Глубокое и поверхностное клонирование - в чем разница?
+
+    При глубоком копировании создается новый объект. Изменения в клонируемом объекте никак не влияют на клонированный
+    объект и наоборот.
+
+10. Какие копии создаются методом clone() в Java по умолчанию?
+
+    Метод clone() в Java создает поверхностные копии. То есть создает копию адреса клонируемого объекта.
+
+Advanced
+
+1. Як реалізована серіалізація в java?
+
+
+2. Що зробити якщо я не хочу серіалізувати поле?
+
+
+3. Що якщо моє поле - об’єкт класу який не є Serializable?
+
+
+4. Яка копія отримується після серіалізації/десеріалізації об’єкта?
+
+
+5. Як поводиться Singleton при серіалізації/десеріалізації?
